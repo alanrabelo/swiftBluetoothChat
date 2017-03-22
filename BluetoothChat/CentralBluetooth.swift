@@ -18,9 +18,11 @@ protocol ObserverPeripheralsList {
  Essa classe é um singleton para poder compartilhar por toda a aplicação os dispositivos bluetooths encontrados, não precisando localizá-lo novamente, e não haver problemas ao passar um periférico de uma instancia para outra.
  */
 class CentralBluetooth: NSObject, CBCentralManagerDelegate {
+    
     static let shared = CentralBluetooth()
     
     fileprivate var manager: CBCentralManager!
+    fileprivate var chatList : ChatList!
     
     private var observersPeripheralsList: [ObserverPeripheralsList] = []
     var peripheralsList: [CBPeripheral] = [] {
@@ -35,6 +37,7 @@ class CentralBluetooth: NSObject, CBCentralManagerDelegate {
 
     private override init() {
         super.init()
+        
         
         manager = CBCentralManager(delegate: self, queue: nil)
     }
@@ -59,14 +62,15 @@ class CentralBluetooth: NSObject, CBCentralManagerDelegate {
         if central.state == .poweredOn {
             // Iniciar o scan. Só podemos fazer isso quando o state for powered on.
             print("Start scan for peripherals")
-            manager.scanForPeripherals(withServices: nil, options: nil)
+            
         }
     }
     
     // Um periférico foi encontrado
     internal func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
 
-        if peripheralsList.contains(peripheral) == false {
+    
+        if peripheralsList.contains(peripheral) == false && peripheral.name != nil {
             peripheralsList.append(peripheral)
         }
     }
@@ -98,3 +102,28 @@ class CentralBluetooth: NSObject, CBCentralManagerDelegate {
         waitPeripheralConnectionCallback.removeValue(forKey: peripheral)
     }
 }
+
+extension CentralBluetooth : ChatListDelegate, ObserverPeripheralsList {
+    internal func update() {
+        
+    }
+    
+    func newPeripheralDiscoved() {
+        
+    }
+    
+    func connectChatRoomSucceeded(chatRoomPeripheral: ChatRoomPeripheral) {
+        
+        print("Data from peripheral \(chatRoomPeripheral) Final data from periferal")
+        
+    }
+    func connectChatRoomFailed(error: Error?) {
+        if error != nil {
+            print("error Connecting: \(error!.localizedDescription)")
+            
+        }
+    }
+}
+
+
+

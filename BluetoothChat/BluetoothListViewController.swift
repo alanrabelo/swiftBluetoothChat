@@ -23,7 +23,7 @@ class BluetoothListViewController: UIViewController {
         chatList = ChatList(delegate: self)
     }
     
-    @IBAction func btnCreateChatRoom(_ sender: Any) {
+    @IBAction func btnCreateChatRoom(_ sender: UIBarButtonItem) {
         self.performSegue(withIdentifier: "segueChat", sender: nil)
     }
 
